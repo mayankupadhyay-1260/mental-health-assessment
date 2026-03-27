@@ -67,7 +67,7 @@ const AssessmentEngine = () => {
       if (res.data.isFinished) {
         console.log('--- Assessment Finished reached on Frontend ---');
         console.log('Backend Response Data:', res.data);
-        const finalReport = res.data.report;
+        let finalReport = res.data.report;
         
         if (finalReport) {
           console.log('Calculated Result Score:', finalReport.totalScore);
