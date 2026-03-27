@@ -6,6 +6,11 @@ import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import errorHandler from './middleware/error.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Route files
 import authRoutes from './routes/authRoutes.js';
@@ -77,6 +82,21 @@ app.use('/api/assessment', assessmentRoutes);
 
 // Error Handler Middleware
 app.use(errorHandler);
+
+// ---------- SERVE FRONTEND (SINGLE-SERVER DEPLOYMENT) ----------
+// If we are in production, serve the built React static files
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html')
+    )
+  );
+} else {
+  // Useful for local development if accessed directly via browser
+  app.get('/', (req, res) => res.send('Please set NODE_ENV to production to serve the frontend!'));
+}
 
 const PORT = process.env.PORT || 5000;
 
