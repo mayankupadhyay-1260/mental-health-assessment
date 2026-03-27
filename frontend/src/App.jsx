@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Layout/Navbar';
-import Footer from './components/Layout/Footer';
+import Navbar from './components/Layouts/Navbar';
+import Footer from './components/Layouts/Footer';
 import LandingPage from './features/landing/LandingPage';
 
 // Lazy load the Demo Features page to optimize main bundle size
@@ -28,10 +28,10 @@ function App() {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />
-                
+
                 {/* Lazy Loaded Route */}
-                <Route 
-                  path="/demo" 
+                <Route
+                  path="/demo"
                   element={
                     <Suspense fallback={
                       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -41,14 +41,14 @@ function App() {
                     }>
                       <DemoFeatures />
                     </Suspense>
-                  } 
+                  }
                 />
-                
+
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/health-library/diseases" element={<DiseasesPage />} />
                 <Route path="/health-library/drugs" element={<SupplementsPage />} />
                 <Route path="/health-library/lifestyle" element={<LifestylePage />} />
-                
+
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
