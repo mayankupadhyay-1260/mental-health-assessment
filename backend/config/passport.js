@@ -9,9 +9,13 @@ export default function(passport) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         // Using an absolute URL built from FRONTEND_URL is the only 100% foolproof way
         // to prevent proxy https stripping issues on Render!
-        callbackURL: process.env.NODE_ENV === 'production'
-          ? `${process.env.FRONTEND_URL}/api/auth/google/callback`
-          : 'http://localhost:5000/api/auth/google/callback',
+        callbackURL: (() => {
+          const url = process.env.NODE_ENV === 'production'
+            ? `${process.env.FRONTEND_URL}/api/auth/google/callback`
+            : 'http://localhost:5000/api/auth/google/callback';
+          console.log("[OAuth Debug] Configured Google callbackURL:", url);
+          return url;
+        })(),
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
