@@ -84,14 +84,20 @@ app.use('/api/assessment', assessmentRoutes);
 // ---------- SERVE FRONTEND (SINGLE-SERVER DEPLOYMENT) ----------
 // If we are in production, serve the built React static files
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  const frontendPath = path.join(__dirname, '..', 'frontend', 'dist');
+  app.use(express.static(frontendPath));
 
-  // Express 5 strictly requires RegExp or named parameters for catch-alls!
-  app.get(/(.*)/, (req, res) =>
-    res.sendFile(
-      path.resolve(__dirname, '../frontend/dist/index.html')
-    )
-  );
+  app.get(/(.*)/, (req, res) => {
+    const indexPath = path.join(frontendPath, 'index.html');
+    
+    // Defensive check to avoid 502 crashing if the frontend failed to build
+    import('fs').then(fs => {
+      if (!fs.existsSync(indexPath)) {
+         return res.status(500).send('Frontend not built correctly on Render. Check logs!');
+      }
+      res.sendFile(indexPath);
+    });
+  });
 } else {
   // Useful for local development if accessed directly via browser
   app.get('/', (req, res) => res.send('Please set NODE_ENV to production to serve the frontend!'));
