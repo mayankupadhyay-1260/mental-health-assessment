@@ -16,7 +16,9 @@ router.put('/updatedetails', protect, updateDetails);
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { 
+    failureRedirect: process.env.NODE_ENV === 'production' ? '/auth' : 'http://localhost:5173/auth' 
+  }),
   (req, res, next) => {
     // Generate JWT token like regular login
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET || 'secret123', {
@@ -35,7 +37,8 @@ router.get('/google/callback',
     res.cookie('token', token, options);
     
     // Redirect to frontend dashboard
-    res.redirect('http://localhost:5173/dashboard');
+    const redirectUrl = process.env.NODE_ENV === 'production' ? '/dashboard' : 'http://localhost:5173/dashboard';
+    res.redirect(redirectUrl);
   }
 );
 
