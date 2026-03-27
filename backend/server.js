@@ -57,9 +57,10 @@ app.use(helmet());
 
 // Enable CORS
 app.use(cors({
-  // Use the live Vercel frontend URL, but fall back to the local Vite dev server for testing
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
-  credentials: true // Crucial for cookies/sessions to be sent between frontend and backend
+  origin: process.env.NODE_ENV === 'production'
+    ? true   // allow same-origin
+    : 'http://localhost:5173',
+  credentials: true
 }));
 
 // Request logging middleware for debugging
@@ -80,23 +81,24 @@ app.use(limiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/assessment', assessmentRoutes);
 
-// Error Handler Middleware
-app.use(errorHandler);
-
 // ---------- SERVE FRONTEND (SINGLE-SERVER DEPLOYMENT) ----------
 // If we are in production, serve the built React static files
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-  app.get('*', (req, res) =>
+  // Express 5 strictly requires RegExp or named parameters for catch-alls!
+  app.get(/(.*)/, (req, res) =>
     res.sendFile(
-      path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html')
+      path.resolve(__dirname, '../frontend/dist/index.html')
     )
   );
 } else {
   // Useful for local development if accessed directly via browser
   app.get('/', (req, res) => res.send('Please set NODE_ENV to production to serve the frontend!'));
 }
+
+// Error Handler Middleware (Must be last middleware in the chain)
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
