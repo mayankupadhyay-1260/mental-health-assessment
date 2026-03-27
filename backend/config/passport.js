@@ -7,9 +7,11 @@ export default function(passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        // Using a relative path allows Passport to dynamically generate the correct URL
-        // regardless of whether you are running on localhost or your live Render domain!
-        callbackURL: '/api/auth/google/callback',
+        // Using an absolute URL built from FRONTEND_URL is the only 100% foolproof way
+        // to prevent proxy https stripping issues on Render!
+        callbackURL: process.env.NODE_ENV === 'production'
+          ? `${process.env.FRONTEND_URL}/api/auth/google/callback`
+          : 'http://localhost:5000/api/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
