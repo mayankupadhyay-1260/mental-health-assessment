@@ -141,7 +141,7 @@ const Navbar = () => {
             <Link to={user ? "/profile" : "/auth"}>
               <motion.div whileHover={{ scale: 1.05 }} className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-brand-primary p-[2px] cursor-pointer shadow-md">
                 <div className="w-full h-full rounded-full bg-white dark:bg-[#0B0C10] overflow-hidden flex items-center justify-center">
-                  <img alt="User" src={`https://ui-avatars.com/api/?name=${user?.name || 'Login'}&background=random`} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                  <img alt="User" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Login')}&background=random`} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
                 </div>
               </motion.div>
             </Link>
