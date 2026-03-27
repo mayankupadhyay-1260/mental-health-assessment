@@ -10,9 +10,11 @@ export default function(passport) {
         // Using an absolute URL built from FRONTEND_URL is the only 100% foolproof way
         // to prevent proxy https stripping issues on Render!
         callbackURL: (() => {
-          const url = process.env.NODE_ENV === 'production'
-            ? `${process.env.FRONTEND_URL}/api/auth/google/callback`
-            : 'http://localhost:5000/api/auth/google/callback';
+          const liveDomain = 'https://mental-health-assessment-0am3.onrender.com';
+          const baseUrl = process.env.NODE_ENV === 'production'
+            ? (process.env.FRONTEND_URL || liveDomain)
+            : 'http://localhost:5000';
+          const url = `${baseUrl}/api/auth/google/callback`;
           console.log("[OAuth Debug] Configured Google callbackURL:", url);
           return url;
         })(),
