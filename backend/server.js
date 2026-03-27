@@ -53,7 +53,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Set security headers
-app.use(helmet());
+// Disabling strict CSP and COEP so our React frontend can load third-party images (ui-avatars) and iframes (YouTube)
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 
 // Enable CORS
 app.use(cors({
